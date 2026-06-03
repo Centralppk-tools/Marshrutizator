@@ -1,0 +1,8 @@
+{
+  "name": "Маршрутизатор",
+  "short_name": "Маршрут",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0d1420",
+  "theme_color": "#0d1420"
+}

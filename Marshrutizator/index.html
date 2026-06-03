@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Маршрутизатор</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <meta name="theme-color" content="#0d1420">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0d1420;
+            color: #f4f7ff;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            font-weight: 400;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .phone-screen {
+            width: 100%;
+            max-width: 640px;
+            min-height: auto;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            padding: 28px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+    }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #f4f7ff;
+            letter-spacing: 0.5px;
+        }
+
+    .date-input {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #f4f7ff;
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-size: 14px;
+        outline: none;
+        backdrop-filter: blur(5px);
+        color-scheme: dark; /* Важно для нативного календаря в темной теме */
+        cursor: pointer;
+        transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .date-input:focus {
+        border-color: #178038;
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+        /* Переключатель вкладок */
+        .tabs-nav {
+            display: flex;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 2px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #c4d1e8;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: transform 0.2s ease, color 0.2s ease, background 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: #f7fbff;
+            transform: translateY(-1px);
+        }
+
+        .tab-btn.active {
+            background: rgba(0, 113, 227, 0.14);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(0, 113, 227, 0.22);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 13px 16px;
+            font-size: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.06);
+            color: #f4f7ff;
+            backdrop-filter: blur(10px);
+        }
+
+        input[type="text"]:focus {
+            border-color: #178038;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .action-btn {
+            background-color: #178038;
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            padding: 12px 22px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background-color: #1f8440;
+            transform: translateY(-1px);
+        }
+
+        .action-btn:active {
+            background-color: #0f5a2c;
+        }
+
+        button:focus-visible,
+        input[type="text"]:focus-visible {
+            outline: 2px solid rgba(29, 167, 69, 0.45);
+            outline-offset: 2px;
+        }
+
+        .trains-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 3px;
+            margin-bottom: 12px;
+        }
+
+        .train-input {
+            padding: 6px 3px;
+            font-size: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 5px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.06);
+            color: #f4f7ff;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            font-weight: 500;
+            transition: border-color 0.2s ease, background 0.2s ease;
+            min-width: 0;
+            line-height: 1.2;
+        }
+
+        .train-input:focus {
+            border-color: #178038;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .train-input::placeholder {
+            color: #6b7a96;
+            font-size: 9px;
+        }
+
+        .trains-submit {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .trains-submit .action-btn {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .trains-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                margin-bottom: 14px;
+            }
+
+            .train-input {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .trains-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+                margin-bottom: 12px;
+            }
+
+            .train-input {
+                padding: 9px 8px;
+                font-size: 11px;
+            }
+
+            .trains-submit {
+                gap: 8px;
+            }
+        }
+        /* ===== МАРШРУТЫ: Контейнер с карточками ===== */
+        .route-grid {
+            display: flex; /* Контейнер для вертикального стека */
+            flex-direction: column; /* Карточки идут вниз */
+            gap: 12px; /* Расстояние между карточками */
+            width: 100%; /* Займёт всю доступную ширину */
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0; /* Карточка появляется прозрачной */
+                transform: translateY(6px); /* И немного выше позиции */
+            }
+            to {
+                opacity: 1; /* Становится видимой */
+                transform: translateY(0); /* И опускается в свою позицию */
+            }
+        }
+
+        /* ===== МАРШРУТЫ: Сама карточка маршрута ===== */
+        .route-card {
+            background: #141b27; /* Глубокий тёмно-синий фон карточки */
+            border: 1px solid rgba(255, 255, 255, 0.05); /* Тончайшая белая обводка */
+            border-radius: 12px; /* Мягкие скругленные углы */
+            padding: 0; /* Отступы внутри задаются через .route-card-section */
+            display: flex; /* Флекс-контейнер для секций */
+            flex-direction: column; /* Три секции (top/middle/bottom) идут вниз */
+            position: relative; /* Базис для абсолютного позиционирования ::before */
+            overflow: hidden; /* Скрывает содержимое за границами */
+            transition: border-color 0.2s ease, background 0.2s ease; /* Плавная смена цветов при наведении */
+            animation: fadeInScale 0.3s ease-out; /* Анимация появления карточки */
+        }
+
+        /* Наведение на карточку — делает её кликабельной и меняет стиль */
+        .route-card.clickable { cursor: pointer; } /* Показывает, что кликабельна */
+        .route-card.clickable:hover {
+            border-color: rgba(255, 255, 255, 0.12); /* Обводка слегка светлеет */
+            background: #192232; /* Фон светлеет */
+        }
+
+        /* Синий вертикальный полоска слева — визуальный маркер маршрута */
+        .route-card::before {
+            content: ''; /* Псевдоэлемент */
+            position: absolute; /* Позиционируется абсолютно внутри карточки */
+            left: 0; /* К левому краю */
+            top: 0; /* От верхнего края */
+            width: 6px; /* Ширина полоски */
+            height: 100%; /* На всю высоту карточки */
+            background: #8295ff; /* Благородный синий цвет */
+        }
+
+        /* Внутренние отступы для всех трёх секций карточки */
+        .route-card-section {
+            padding: 8px 14px 8px 22px; /* Верх 8px | Право 14px | Низ 8px | Слева 22px (место под синюю полоску) */
+        }
+
+        /* ===== МАРШРУТЫ: Верхняя секция — маршрут и остановки ===== */
+        .route-card-top {
+            display: flex; /* Flex-контейнер */
+            flex-direction: column; /* Содержимое идёт вниз */
+            gap: 2px; /* Минимальный зазор между названием и номером/остановками */
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.06); /* Тонкий пунктир-разделитель */
+            overflow: hidden; /* Скрывает переполнение */
+        }
+
+        /* Название маршрута (например "Москва — Ярославль") */
+        .route-card-title {
+            font-size: 16px; /* Размер шрифта */
+            font-weight: 600; /* Полужирный */
+            color: #ffffff; /* Белый цвет */
+            white-space: nowrap; /* Не переносит текст */
+            overflow: hidden; /* Если длинный — скрывает */
+            text-overflow: ellipsis; /* Добавляет многоточие в конце */
+            width: 100%; /* Займёт всю ширину */
+        }
+
+        /* Подстрока в верхней секции: номер поезда и количество остановок */
+        .route-card-subtitle {
+            display: flex; /* Флекс для расположения по горизонтали */
+            justify-content: space-between; /* Номер слева, остановки справа */
+            gap: 12px; /* Расстояние между ними */
+            font-size: 12px; /* Маленький шрифт */
+            color: #8393af; /* Серый приглушённый цвет */
+            overflow: hidden; /* Скрывает переполнение */
+        }
+
+        /* Левая часть подстроки (номер поезда) */
+        .route-card-subtitle span:first-child {
+            white-space: nowrap; /* Не переносит текст */
+            flex-shrink: 0; /* Не сжимается */
+        }
+
+        /* Правая часть подстроки (список остановок Яндекса) */
+        .route-card-subtitle span:last-child {
+            white-space: nowrap; /* Не переносит */
+            overflow: hidden; /* Скрывает, если выходит за границы */
+            text-overflow: ellipsis; /* Добавляет многоточие */
+            text-align: right; /* Выравнивает текст вправо */
+        }
+
+        /* ===== МАРШРУТЫ: Средняя секция — время и пробы ===== */
+        .route-card-middle {
+            display: flex; /* Flex-контейнер */
+            flex-direction: column; /* Содержимое идёт вниз */
+            gap: 8px; /* Небольшой зазор между временем и плашками с пробами */
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.06); /* Пунктир-разделитель */
+        }
+
+        /* Время отправки и прибытия (22:15 - 06:45) */
+        .route-time {
+            font-size: 20px; /* Крупный шрифт для наглядности */
+            font-weight: 700; /* Жирный */
+            color: #ffffff; /* Белый */
+            letter-spacing: 0.5px; /* Небольшое расширение букв */
+            flex-shrink: 0; /* Не сжимается */
+        }
+
+        /* Контейнер для плашек с пробами (если есть) */
+        .route-tags-container {
+            display: flex; /* Flex для расположения по горизонтали */
+            gap: 8px; /* Маленькое расстояние между плашками */
+            flex-wrap: wrap; /* Переносит плашки на новую строку, если много */
+            align-items: flex-start; /* Плашки выравниваются по верхнему краю */
+        }
+
+        /* Одна плашка с пробой (например "ПТ — 42пк3" или "Тупик — 156пк8") */
+        .route-brake-box {
+            border: 1px solid rgba(234, 179, 8, 0.2); /* Тончайшая жёлтая обводка */
+            background: rgba(234, 179, 8, 0.06); /* Полупрозрачный жёлтый фон */
+            border-radius: 6px; /* Скруглённые углы */
+            padding: 4px 8px; /* Минимальные отступы внутри */
+            display: flex; /* Flex для вертикального содержимого */
+            flex-direction: column; /* Текст идёт вниз */
+            gap: 2px; /* Нет промежутков (для однострочных текстов) */
+            flex-shrink: 0; /* Не сжимается */
+        }
+
+        /* Текст внутри плашки с пробой */
+        .route-brake-text {
+            color: #eab308; /* Мягкий жёлто-оранжевый цвет */
+            font-size: 12px; /* Маленький шрифт */
+            font-weight: 600; /* Полужирный */
+            white-space: nowrap; /* Не переносит текст */
+        }
+
+        /* ===== МАРШРУТЫ: Нижняя секция — информация об обороте ===== */
+        .route-card-bottom {
+            display: flex; /* Flex для расположения по горизонтали */
+            justify-content: space-between; /* "В пути" слева, "Оборот" справа */
+            align-items: center; /* Выравнивание по центру вертикали */
+            font-size: 13px; /* Маленький шрифт */
+            color: #8393af; /* Серый приглушённый цвет */
+            white-space: nowrap; /* Не переносит текст */
+        }
+
+
+        /* ===== РАСПИСАНИЕ: Контейнер с вертикальной шкалой времени ===== */
+        .timeline {
+            position: relative;
+            padding-left: 0;
+            --km-marker-width: 44px;
+            --km-marker-gap: 10px;
+            --timeline-left: calc(var(--km-marker-width) / 2);
+            --station-fill: #111f35;
+            --station-stroke: #1f2b3e;
+            --station-brakes-fill: linear-gradient(135deg, #30291d, #171925);
+            --station-brakes-stroke: #47371b;
+            --station-brakes-badge-fill: #3d3018;
+            --station-brakes-badge-stroke: #5c4a28;
+            --station-brakes-badge-text: #fbbf24;
+            --station-active-stroke: #178038;
+            --station-active-glow: 0 0 12px #145a2e;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: var(--timeline-left);
+            top: 24px;
+            bottom: 24px;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .station-node {
+            position: relative;
+            padding-left: calc(var(--km-marker-width) + var(--km-marker-gap));
+            margin-bottom: 14px;
+            width: 100%;
+        }
+
+        .station-card {
+            background: var(--station-fill);
+            border: 1px solid var(--station-stroke);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .station-card.has-brakes {
+            background: var(--station-brakes-fill);
+            border-color: var(--station-brakes-stroke);
+        }
+
+        .station-node.active .station-card {
+            border-color: var(--station-active-stroke);
+            box-shadow: var(--station-active-glow);
+        }
+
+        /* ===== РАСПИСАНИЕ: Верхняя строка карточки — название станции и время ===== */
+        .card-row-top {
+            display: flex; /* Flex для горизонтального расположения */
+            justify-content: space-between; /* Название слева, время справа */
+            align-items: center; /* Выравнивание по центру вертикали */
+            gap: 12px; /* Расстояние между ними */
+            width: 100%; /* Займёт всю ширину */
+        }
+
+        /* Название станции */
+        .station-name {
+            font-size: 16px; /* Размер шрифта */
+            font-weight: 600; /* Полужирный */
+            color: #f4f7ff; /* Светлый цвет */
+            white-space: nowrap; /* Не переносит текст */
+            overflow: hidden; /* Скрывает переполнение */
+            text-overflow: ellipsis; /* Добавляет многоточие */
+            flex: 1; /* Займёт оставшееся место */
+            min-width: 0; /* Позволяет сжиматься ниже минимума */
+        }
+
+        /* Время остановки (вверху справа) — с тёмной подложкой для контраста */
+        .time-badge {
+            background: rgba(0, 0, 0, 0.2); /* Тёмная подложка */
+            color: #e2e8f0; /* Светлый текст */
+            padding: 5px 10px; /* Внутренние отступы */
+            border-radius: 6px; /* Скруглённые углы */
+            font-size: 13px; /* Размер шрифта */
+            font-weight: 600; /* Полужирный */
+            flex-shrink: 0; /* Не сжимается */
+            white-space: nowrap; /* Не переносит текст */
+        }
+
+        /* ===== РАСПИСАНИЕ: Нижняя строка карточки — пробы тормозов ===== */
+        .card-row-bottom {
+            border-top: 1px dashed rgba(255, 255, 255, 0.1); /* Пунктирный разделитель */
+            padding-top: 8px; /* Отступ сверху */
+            display: flex; /* Flex для горизонтального расположения */
+            flex-wrap: nowrap; /* Не переносит на новую строку */
+            gap: 6px; /* Расстояние между плашками */
+            overflow-x: auto; /* Горизонтальная прокрутка, если не влезает */
+            scrollbar-width: none; /* Скрывает полосу прокрутки в Firefox */
+        }
+        
+        /* Скрывает полосу прокрутки в Chrome и Safari */
+        .card-row-bottom::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Одна плашка с пробой */
+        .brake-badge {
+            background: rgba(0, 0, 0, 0.2); /* Тёмная подложка */
+            color: #e2e8f0; /* Светлый текст */
+            padding: 4px 10px; /* Компактные отступы */
+            border-radius: 6px; /* Скруглённые углы */
+            font-size: 12px; /* Маленький шрифт */
+            font-weight: 500; /* Обычный вес */
+            white-space: nowrap; /* Не переносит текст */
+            flex-shrink: 0; /* Не сжимается */
+            border: 1px solid rgba(255, 255, 255, 0.05); /* Тончайшая обводка */
+        }
+
+        .station-card.has-brakes .brake-badge {
+            background: var(--station-brakes-badge-fill);
+            color: var(--station-brakes-badge-text);
+            border-color: var(--station-brakes-badge-stroke);
+        }
+
+        /* Квадратик км/пикет — по высоте как карточка станции */
+        .station-dot {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--km-marker-width);
+            min-width: var(--km-marker-width);
+            min-height: 48px;
+            height: auto;
+            border-radius: 14px;
+            background: var(--station-fill);
+            border: 1px solid var(--station-stroke);
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 8px 4px;
+            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .station-dot::after {
+            content: attr(data-km);
+            color: #f4f7ff;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.15;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .station-node.has-brakes .station-dot {
+            background: var(--station-brakes-fill);
+            border-color: var(--station-brakes-stroke);
+            box-shadow: 0 0 14px #f59e0b;
+        }
+
+        .station-node.has-brakes .station-dot::after {
+            color: #fbbf24;
+        }
+
+        .station-node.active .station-dot {
+            border-color: var(--station-active-stroke);
+            box-shadow: var(--station-active-glow);
+        }
+
+        .station-node.active.has-brakes .station-dot::after {
+            color: #ffffff;
+        }
+
+        /* ===== РАСПИСАНИЕ: Индикатор загрузки ===== */
+        .loader {
+            display: none; /* По умолчанию скрыт */
+            text-align: center; /* Выравнивание по центру */
+            color: #9db0cf; /* Серый цвет текста */
+            font-size: 14px; /* Размер шрифта */
+            margin: 16px 0; /* Отступы сверху и снизу */
+            position: relative; /* Базис для позиционирования */
+            height: 60px; /* Фиксированная высота */
+            align-items: center; /* Выравнивание по центру вертикали */
+            justify-content: center; /* Выравнивание по центру горизонтали */
+            flex-direction: column; /* Flex для вертикального расположения */
+            gap: 12px; /* Расстояние между элементами */
+        }
+
+        /* Анимирующееся колесо загрузки */
+        .loader::before {
+            content: ''; /* Псевдоэлемент */
+            display: block; /* Блочный элемент */
+            box-sizing: border-box; /* Размер включает границу */
+            flex-shrink: 0; /* Не сжимается */
+            width: 24px; /* Диаметр */
+            height: 24px; /* Диаметр */
+            border: 3px solid rgba(23, 128, 56, 0.2); /* Приглушённая зелёная граница */
+            border-top-color: #178038; /* Ярко-зелёный верх — вращающаяся часть */
+            border-radius: 50%; /* Круглая форма */
+            animation: spin 0.8s linear infinite; /* Вращение */
+        }
+
+        /* Анимация вращения */
+        @keyframes spin {
+            to { transform: rotate(360deg); } /* Полный оборот */
+        }
+
+
+        @media (max-width: 430px) {
+            .phone-screen {
+                min-height: auto;
+                padding: 20px 12px;
+            }
+
+            .tabs-nav {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .tab-btn {
+                width: 100%;
+                border-radius: 14px;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+
+            .route-card {
+                padding: 0; /* Вычистили старый надувающий отступ */
+            }
+
+            .route-card-section {
+                padding: 6px 12px 6px 18px; /* Сделали экстремально узко по вертикали на мобилках */
+            }
+
+            .timeline {
+                --km-marker-width: 40px;
+                --km-marker-gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-screen">
+    <div class="header-container">
+        <h1>Маршрутизатор</h1>
+        <input type="date" id="dateInput" class="date-input">
+    </div>
+
+    <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="tab-route" onclick="switchTab('tab-route', this)">Маршрут</button>
+        <button class="tab-btn" data-tab="tab-schedule" onclick="switchTab('tab-schedule', this)">Расписание</button>
+    </div>
+
+    <div id="tab-route" class="tab-content active">
+        <div class="trains-grid">
+            <input type="text" class="train-input" id="train-1" placeholder="Поезд 1">
+            <input type="text" class="train-input" id="train-2" placeholder="Поезд 2">
+            <input type="text" class="train-input" id="train-3" placeholder="Поезд 3">
+            <input type="text" class="train-input" id="train-4" placeholder="Поезд 4">
+            <input type="text" class="train-input" id="train-5" placeholder="Поезд 5">
+            <input type="text" class="train-input" id="train-6" placeholder="Поезд 6">
+        </div>
+        <div class="trains-submit">
+            <button class="action-btn" onclick="getRouteData()">Показать маршруты</button>
+        </div>
+        
+        <div id="routeLoader" class="loader">Получение данных...</div>
+        
+        <div id="routeGrid" class="route-grid" style="display: none;"></div>
+    </div>
+
+    <div id="tab-schedule" class="tab-content">
+        <div class="search-box">
+            <input type="text" id="singleTrain" placeholder="Номер поезда">
+            <button class="action-btn" onclick="getScheduleData()">Найти</button>
+        </div>
+
+        <div id="scheduleHeader" class="info-tag" style="display:none; margin-bottom: 14px;"></div>
+        <div id="scheduleLoader" class="loader">Сборка нитки...</div>
+
+        <div id="scheduleResults" class="timeline" style="display: none;">
+            <div class="timeline-line"></div>
+            <div id="stationsList"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const DASH_CHAR = String.fromCharCode(45);
+    const API_KEY = '905d4044' + DASH_CHAR + '2b7e' + DASH_CHAR + '45ca' + DASH_CHAR + 'b10c' + DASH_CHAR + 'f0e907c15f00';
+    const API_BASE = 'https://api.rasp.yandex.net/v3.0';
+    const CORS_PROXY = 'https://api.codetabs.com/v1/proxy?quest=';
+    const ANCHOR_STATION = 's2000002';
+
+    let stationScheduleCache = { date: null, data: null };
+    let trainThreadsCache = {}; // Хранилище ниток маршрутов для каждого поезда
+    let sprDataCache = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        document.getElementById('dateInput').value = `${yyyy}${DASH_CHAR}${mm}${DASH_CHAR}${dd}`;
+        
+        // Восстанавливаем сохранённые номера поездов из localStorage
+        const savedTrains = localStorage.getItem('trainNumbers');
+        if (savedTrains) {
+            const trainArray = parseJSON(savedTrains, []);
+            if (Array.isArray(trainArray)) {
+                for (let i = 0; i < trainArray.length && i < 6; i++) {
+                    const input = document.getElementById(`train${DASH_CHAR}${i + 1}`);
+                    if (input) input.value = trainArray[i];
+                }
+            }
+        }
+
+        // Восстанавливаем сохраненный номер одиночного поезда
+        const lastSingle = localStorage.getItem('lastSingleTrain');
+        if (lastSingle) {
+            const singleInput = document.getElementById('singleTrain');
+            if (singleInput) singleInput.value = lastSingle;
+        }
+
+        // Восстанавливаем сохраненное суточное расписание вокзала
+        const localStationCache = localStorage.getItem('stationScheduleCache');
+        if (localStationCache) {
+            stationScheduleCache = parseJSON(localStationCache, stationScheduleCache);
+        }
+
+        // Восстанавливаем сохраненные детальные маршруты поездов
+        const localThreadsCache = localStorage.getItem('trainThreadsCache');
+        if (localThreadsCache) {
+            trainThreadsCache = parseJSON(localThreadsCache, trainThreadsCache);
+        }
+
+        // Восстанавливаем активную вкладку прошлой сессии
+        const activeTab = localStorage.getItem('activeTab') || 'tab-route';
+        const activeBtn = document.querySelector(`.tab-btn[data-tab="${activeTab}"]`);
+        if (activeBtn) {
+            switchTab(activeTab, activeBtn);
+        }
+
+        // Загружаем справочник тормозов при старте
+        fetch('spr.json')
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP ошибка: ${res.status}`);
+                return res.text(); // Получаем текст, чтобы безопасно проверить содержимое
+            })
+            .then(text => {
+                if (!text.trim()) throw new Error('Файл пуст');
+                sprDataCache = JSON.parse(text);
+                console.log("Справочник успешно загружен:", sprDataCache); // Проверка в консоли
+            })
+            .catch(err => {
+                console.error('Связь со справочником утеряна:', err);
+                if (err.name === 'SyntaxError' || err.message === 'Файл пуст') {
+                    alert('Файл spr.json пуст или содержит ошибку (невалидный JSON). Открой spr.json, вставь туда данные и обязательно сохрани (Ctrl+S)!');
+                } else {
+                    alert('Не удалось загрузить spr.json. Если ты открыл файл просто двойным кликом, браузер блокирует загрузку локальных файлов. Используй Live Server.');
+                }
+            })
+            .finally(() => {
+                if (savedTrains && activeTab === 'tab-route') {
+                    getRouteData();
+                } else if (lastSingle && activeTab === 'tab-schedule') {
+                    getScheduleData();
+                }
+            });
+    });
+
+    function getSelectedDate() {
+        return document.getElementById('dateInput').value;
+    }
+
+    function getTime(tStr) {
+        if (!tStr) return '...';
+        const m = tStr.match(/(\d{2}:\d{2})/);
+        return m ? m[1] : tStr;
+    }
+
+    function formatMinutesToHoursAndMinutes(totalMinutes) {
+        if (totalMinutes === null || totalMinutes === '...' || isNaN(totalMinutes) || totalMinutes < 0) {
+            return '...';
+        }
+        const mins = parseInt(totalMinutes);
+        if (mins >= 60) {
+            const h = Math.floor(mins / 60);
+            const m = mins % 60;
+            return m > 0 ? `${h} ч ${m} мин` : `${h} ч`;
+        } else {
+            return `${mins} мин`;
+        }
+    }
+
+    function parseTimeToMinutes(timeString) {
+        if (!timeString || timeString === '...') return null;
+        const [hours, minutes] = timeString.split(':').map(Number);
+        return Number.isFinite(hours) && Number.isFinite(minutes) ? hours * 60 + minutes : null;
+    }
+
+    function normalizeStationName(name) {
+        return String(name || '')
+            .trim()
+            .replace(/\s+/g, ' ')
+            .toLowerCase();
+    }
+
+    function normalizeStationKey(name) {
+        return normalizeStationName(name)
+            .replace(/\u0451/g, '\u0435') /* ё → е: Яндекс и spr часто пишут по-разному */
+            .replace(/[\u2010-\u2015\u2212\uFE58\uFE63\uFF0D]/g, '-') /* длинное тире → дефис */
+            .replace(/[^a-zа-яё0-9 \-()]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    function applyStationAliases(searchKey) {
+        let key = searchKey;
+        for (const [yandexName, myName] of Object.entries(ALIASES)) {
+            if (key.includes(normalizeStationKey(yandexName))) {
+                key = normalizeStationKey(myName);
+                break;
+            }
+        }
+        return key;
+    }
+
+    function stationSearchKeys(stationTitle) {
+        const primary = applyStationAliases(normalizeStationKey(stationTitle));
+        const keys = [primary];
+        const noParens = primary.replace(/\s*\([^)]*\)\s*/g, ' ').replace(/\s+/g, ' ').trim();
+        if (noParens && noParens !== primary) keys.push(noParens);
+        return keys;
+    }
+
+    function findStationPathMatch(stationTitle) {
+        if (!sprDataCache?.stations_path) return null;
+        for (const key of stationSearchKeys(stationTitle)) {
+            const hit = sprDataCache.stations_path.find(s => normalizeStationKey(s.station) === key);
+            if (hit) return hit;
+        }
+        return null;
+    }
+
+    function findBrakeMatch(stationTitle, direction) {
+        if (!sprDataCache?.brakes) return null;
+        for (const key of stationSearchKeys(stationTitle)) {
+            const hit = sprDataCache.brakes[direction]?.find(b => normalizeStationKey(b.station) === key)
+                || sprDataCache.brakes.dead_ends?.find(b => normalizeStationKey(b.station) === key);
+            if (hit) return hit;
+        }
+        return null;
+    }
+
+    function parseJSON(value, fallback = null) {
+        try {
+            return JSON.parse(value);
+        } catch (e) {
+            return fallback;
+        }
+    }
+
+    // Словарь-спасатель для Яндекса
+    const ALIASES = {
+        "москва-ярославская": "москва (ярославский вокзал)",
+        "москва ярославская": "москва (ярославский вокзал)",
+        "ростокино (ярославское направление)": "ростокино",
+        "александров-1": "александров",
+        "фрязино-пасс": "фрязино (пассажирская)",
+        "фрязино-пасс.": "фрязино (пассажирская)"
+    };
+
+    async function searchTrainByNumber(trainNumber) {
+        try {
+            const date = getSelectedDate();
+            const cacheKey = date + "_" + trainNumber;
+            
+            // Если нитка этого поезда уже сохранена в памяти, берем её без интернета
+            if (trainThreadsCache[cacheKey]) {
+                console.log("Достали маршрут из памяти устройства:", trainNumber);
+                return trainThreadsCache[cacheKey];
+            }
+            
+            if (!stationScheduleCache.data || stationScheduleCache.date !== date) {
+                const url = `${API_BASE}/schedule/?apikey=${API_KEY}&station=${ANCHOR_STATION}&transport_types=suburban&direction=all&limit=1000&date=${date}&lang=ru_RU`;
+                const response = await fetch(CORS_PROXY + encodeURIComponent(url));
+                if (!response.ok) throw new Error(`Ошибка сервера код ${response.status}`);
+                const data = await response.json();
+                
+                stationScheduleCache.date = date;
+                stationScheduleCache.data = data.schedule || [];
+                // Сохраняем суточное расписание в localStorage
+                localStorage.setItem("stationScheduleCache", JSON.stringify(stationScheduleCache));
+            }
+            
+            const targetStr = trainNumber.toString().replace(/\s/g, '').toLowerCase();
+            const targetDigits = targetStr.replace(/\D/g, '');
+            const trainData = stationScheduleCache.data.find(item => {
+                const threadNumber = String(item.thread?.number || '').replace(/\s/g, '').toLowerCase();
+                if (!threadNumber) return false;
+                if (threadNumber === targetStr) return true;
+                if (targetDigits && threadNumber.replace(/\D/g, '') === targetDigits) return true;
+                return false;
+            });
+            
+            if (!trainData) return null;
+            
+            const threadUrl = `${API_BASE}/thread/?apikey=${API_KEY}&uid=${trainData.thread.uid}&lang=ru_RU`;
+            const threadResponse = await fetch(CORS_PROXY + encodeURIComponent(threadUrl));
+            if (!threadResponse.ok) throw new Error('Не удалось загрузить детали маршрута');
+            const threadData = await threadResponse.json();
+            
+            const stops = threadData.stops || [];
+            if (stops.length === 0) return null;
+            
+            const first = stops[0];
+            const last = stops[stops.length - 1];
+            
+            const departureTime = getTime(first.departure);
+            const arrivalTime = getTime(last.arrival);
+            
+            let durationMins = null;
+            const dMin = parseTimeToMinutes(departureTime);
+            const aMin = parseTimeToMinutes(arrivalTime);
+            if (dMin !== null && aMin !== null) {
+                durationMins = aMin >= dMin ? aMin - dMin : (aMin + 1440) - dMin;
+            }
+            
+            const result = {
+                number: trainData.thread.number,
+                uid: trainData.thread.uid,
+                title: `${first.station.title} ${DASH_CHAR} ${last.station.title}`,
+                transport_type: trainData.thread.express_type === 'express' ? 'РЭКС / Экспресс' : 'Пригородный',
+                departure: departureTime,
+                arrival: arrivalTime,
+                duration: durationMins,
+                stops: stops,
+                stops_text: trainData.stops || 'Со всеми остановками'
+            };
+            
+            // Записываем полученную нитку поезда в память устройства
+            trainThreadsCache[cacheKey] = result;
+            localStorage.setItem("trainThreadsCache", JSON.stringify(trainThreadsCache));
+            
+            return result;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+        // Запоминаем текущую вкладку
+        localStorage.setItem('activeTab', tabId);
+    }
+
+    async function getRouteData() {
+        const inputs = Array.from({ length: 6 }, (_, i) => 
+            document.getElementById(`train${DASH_CHAR}${i + 1}`).value.trim()
+        ).filter(Boolean);
+
+        if (inputs.length === 0) {
+            alert('Введите хотя бы один номер поезда.');
+            return;
+        }
+        
+        // Сохраняем номера поездов в localStorage
+        localStorage.setItem('trainNumbers', JSON.stringify(inputs));
+
+        const loader = document.getElementById('routeLoader');
+        const grid = document.getElementById('routeGrid');
+
+        loader.style.display = 'flex';
+        grid.style.display = 'none';
+
+        const trainPromises = inputs.map(trainNumber => searchTrainByNumber(trainNumber));
+        const allTrainsData = await Promise.all(trainPromises);
+        
+        const cards = [];
+        
+        for (let i = 0; i < inputs.length; i++) {
+            const trainNumber = inputs[i];
+            const train = allTrainsData[i];
+            
+            if (train) {
+                let durationHtml = `В пути: ${formatMinutesToHoursAndMinutes(train.duration)}`;
+                let turnaroundHtml = '';
+
+                if (i < inputs.length - 1) {
+                    const nextTrain = allTrainsData[i + 1];
+                    if (nextTrain) {
+                        const arrCurrentMinutes = parseTimeToMinutes(train.arrival);
+                        const depNextMinutes = parseTimeToMinutes(nextTrain.departure);
+
+                        if (arrCurrentMinutes !== null && depNextMinutes !== null) {
+                            let turnaroundMinutes = depNextMinutes - arrCurrentMinutes;
+                            if (turnaroundMinutes < 0) {
+                                turnaroundMinutes += 1440;
+                            }
+                            turnaroundHtml = `Оборот: ${formatMinutesToHoursAndMinutes(turnaroundMinutes)}`;
+                        }
+                    }
+                }
+
+                const firstTitle = train.stops[0]?.station?.title || '';
+                const lastTitle = train.stops[train.stops.length - 1]?.station?.title || '';
+                let currentDirection = 'to_moscow';
+                if (firstTitle.toLowerCase().includes('москва')) {
+                    currentDirection = 'from_moscow';
+                }
+
+                let brakeHtml = '';
+                if (sprDataCache) {
+                    let startBrakesHtml = '';
+                    let endBrakesHtml = '';
+
+                    const startKeys = stationSearchKeys(firstTitle);
+                    const startBrakesList = sprDataCache.brakes[currentDirection]?.filter(b =>
+                        startKeys.includes(normalizeStationKey(b.station))
+                    ) || [];
+                    const ptBrake = startBrakesList.find(b => b.type === "PT_1");
+                    const eptBrake = startBrakesList.find(b => b.type === "EPT_2");
+
+                    let startTags = [];
+                    if (ptBrake) startTags.push(`ПТ ${DASH_CHAR} ${ptBrake.km}пк${ptBrake.piket}`);
+                    if (eptBrake) startTags.push(`ЭПТ ${DASH_CHAR} ${eptBrake.km}пк${eptBrake.piket}`);
+                    
+                    if (startTags.length > 0) {
+                        startBrakesHtml = `<div class="route${DASH_CHAR}brake${DASH_CHAR}box">` + startTags.map(t => `<span class="route${DASH_CHAR}brake${DASH_CHAR}text">${t}</span>`).join('') + `</div>`;
+                    }
+
+                    const endKeys = stationSearchKeys(lastTitle);
+                    const deadEndMatch = sprDataCache.brakes.dead_ends?.find(b =>
+                        endKeys.includes(normalizeStationKey(b.station))
+                    );
+                    if (deadEndMatch) {
+                        const trackInfo = deadEndMatch.track ? ` (${deadEndMatch.track})` : '';
+                        endBrakesHtml = `<div class="route${DASH_CHAR}brake${DASH_CHAR}box"><span class="route${DASH_CHAR}brake${DASH_CHAR}text">Тупик ${DASH_CHAR} ${deadEndMatch.km}пк${deadEndMatch.piket}${trackInfo}</span></div>`;
+                    }
+
+                    if (startBrakesHtml || endBrakesHtml) {
+                        brakeHtml = `<div class="route${DASH_CHAR}tags${DASH_CHAR}container">${startBrakesHtml}${endBrakesHtml}</div>`;
+                    }
+                }
+
+                cards.push(`
+                    <div class="route-card clickable" data-uid="${train.uid}" data-number="${train.number}" onclick="viewTrainSchedule(this.dataset.uid, this.dataset.number)">
+                        <div class="route-card-section route-card-top">
+                            <div class="route-card-title">${train.title}</div>
+                            <div class="route-card-subtitle">
+                                <span>Поезд ${train.number}</span>
+                                <span>${train.stops_text}</span>
+                            </div>
+                        </div>
+                        <div class="route-card-section route-card-middle">
+                            <div class="route-time">${train.departure} ${DASH_CHAR} ${train.arrival}</div>
+                            ${brakeHtml}
+                        </div>
+                        <div class="route-card-section route-card-bottom">
+                            <span>${durationHtml}</span>
+                            <span>${turnaroundHtml}</span>
+                        </div>
+                    </div>
+                `);
+            } else {
+                cards.push(`
+                    <div class="route-card" style="opacity: 0.5;">
+                        <div class="route-card-section route-card-top">
+                            <div class="route-card-title" style="color: #ff6b6b;">Рейс не найден</div>
+                            <div class="route-card-subtitle">
+                                <span>Поезд ${trainNumber}</span>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            }
+        }
+
+        loader.style.display = 'none';
+        grid.innerHTML = cards.join('');
+        grid.style.display = 'flex';
+    }
+
+    function findClosestStationIndex(stops, selectedDate) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const todayStr = `${yyyy}${DASH_CHAR}${mm}${DASH_CHAR}${dd}`;
+
+        // Если выбран не сегодняшний день, не подсвечиваем станцию
+        if (selectedDate && selectedDate !== todayStr) return -1;
+
+        const currentMinutes = today.getHours() * 60 + today.getMinutes();
+        let closestIndex = 0;
+        let closestDiff = Infinity;
+
+        for (let i = 0; i < stops.length; i++) {
+            const stop = stops[i];
+            const arr = parseTimeToMinutes(getTime(stop.arrival));
+            const dep = parseTimeToMinutes(getTime(stop.departure));
+            
+            if (arr !== null && dep !== null && currentMinutes >= arr && currentMinutes <= dep) {
+                return i;
+            }
+
+            const markerTime = dep !== null ? dep : arr;
+            if (markerTime === null) continue;
+
+            // Корректный расчет разницы с учетом перехода через полночь (1440 минут)
+            let diff = Math.abs(currentMinutes - markerTime);
+            if (diff > 720) {
+                diff = 1440 - diff;
+            }
+
+            if (diff < closestDiff) {
+                closestDiff = diff;
+                closestIndex = i;
+            }
+        }
+        return closestIndex;
+    }
+
+    async function getScheduleData() {
+        const inputField = document.getElementById('singleTrain');
+        const input = inputField.value.trim();
+
+        if (!input) {
+            alert('Введите номер поезда.');
+            return;
+        }
+
+        // Запоминаем последний введенный одиночный поезд
+        localStorage.setItem('lastSingleTrain', input);
+
+        const loader = document.getElementById('scheduleLoader');
+        const results = document.getElementById('scheduleResults');
+        const header = document.getElementById('scheduleHeader');
+
+        loader.style.display = 'flex';
+        results.style.display = 'none';
+        header.style.display = 'none';
+
+        const trainMeta = await searchTrainByNumber(input);
+        
+        if (!trainMeta) {
+            loader.style.display = 'none';
+            alert('Поезд не найден.');
+            return;
+        }
+
+        const selectedDate = getSelectedDate();
+        renderTimelineFromData(trainMeta.stops, trainMeta.number, selectedDate);
+        loader.style.display = 'none';
+    }
+
+    function renderTimelineFromData(stops, trainNumber, selectedDate) {
+        if (!stops || stops.length === 0) return;
+
+        const D = String.fromCharCode(45);
+        const results = document.getElementById('scheduleResults');
+        const header = document.getElementById('scheduleHeader');
+        const list = document.getElementById('stationsList');
+
+        const first = stops[0];
+        const last = stops[stops.length - 1];
+        const routeTitle = `${first.station?.title || 'Станция'} → ${last.station?.title || 'Станция'}`;
+
+        header.innerHTML = `<div style="margin${D}bottom: 8px;"><strong>${routeTitle}</strong></div><div style="font${D}size: 12px; color: #b8c7e2;">Поезд ${trainNumber}</div>`;
+        header.style.display = 'block';
+
+        const activeIndex = findClosestStationIndex(stops, selectedDate);
+
+        const firstTitle = (first.station?.title || '').toLowerCase();
+        
+        // Поиск направления: если первая станция Москва, то едем из нее, иначе на нее
+        let currentDirection = 'to_moscow'; 
+        if (firstTitle.includes('москва')) {
+            currentDirection = 'from_moscow';
+        }
+
+        list.innerHTML = stops.map((stop, index) => {
+            const arrivalTime = getTime(stop.arrival);
+            const departureTime = getTime(stop.departure);
+            const isActive = index === activeIndex && activeIndex !== -1;
+            
+            const isFirst = index === 0;
+            const isLast = index === stops.length - 1;
+            const isTerminal = isFirst || isLast;
+            
+            let timeText = '';
+            if (isFirst) {
+                timeText = departureTime;
+            } else if (isLast) {
+                timeText = arrivalTime;
+            } else {
+                timeText = `${arrivalTime} ${D} ${departureTime}`;
+            }
+
+            let brakeHtml = '';
+            let hasBrakes = false;
+            let kmText = ''; // Сюда запишем наш километраж 4.5
+            
+            if (sprDataCache) {
+                const stationTitle = stop.station?.title || '';
+                const searchKeys = stationSearchKeys(stationTitle);
+
+                const stationPathMatch = findStationPathMatch(stationTitle);
+                
+                if (stationPathMatch) {
+                    kmText = `${stationPathMatch.km}.${stationPathMatch.piket}`;
+                } else {
+                    const anyBrakeMatch = findBrakeMatch(stationTitle, currentDirection);
+                    if (anyBrakeMatch) {
+                        kmText = `${anyBrakeMatch.km}.${anyBrakeMatch.piket}`;
+                    }
+                }
+
+                let tags = [];
+
+                // Жесткая логика: распределение тормозов по типу конечных станций
+                if (isFirst) {
+                    const stationBrakes = sprDataCache.brakes[currentDirection]?.filter(b =>
+                        searchKeys.includes(normalizeStationKey(b.station))
+                    ) || [];
+
+                    const ptBrake = stationBrakes.find(b => b.type === "PT_1");
+                    const eptBrake = stationBrakes.find(b => b.type === "EPT_2");
+
+                    if (ptBrake) {
+                        tags.push(`ПТ ${ptBrake.km}пк${ptBrake.piket}`);
+                        hasBrakes = true;
+                    }
+                    if (eptBrake) {
+                        tags.push(`ЭПТ ${eptBrake.km}пк${eptBrake.piket}`);
+                        hasBrakes = true;
+                    }
+                } else if (isLast) {
+                    const deadEndMatch = sprDataCache.brakes.dead_ends?.find(b =>
+                        searchKeys.includes(normalizeStationKey(b.station))
+                    );
+
+                    if (deadEndMatch) {
+                        const trackInfo = deadEndMatch.track ? ` (${deadEndMatch.track})` : '';
+                        tags.push(`Тупик ${deadEndMatch.km}пк${deadEndMatch.piket}${trackInfo}`);
+                        hasBrakes = true;
+                    }
+                }
+
+                if (tags.length > 0) {
+                    brakeHtml = tags.map(tag => `<div class="brake${D}badge">${tag}</div>`).join('');
+                }
+            }
+
+            return `
+                <div class="station${D}node${isActive ? ' active' : ''}${hasBrakes ? ' has-brakes' : ''}${isTerminal ? ' terminal' : ''}">
+                    <div class="station${D}dot" data-km="${kmText ? kmText : '•'}"></div>
+                    <div class="station${D}card${hasBrakes ? ' has-brakes' : ''}">
+                        <div class="card${D}row${D}top">
+                            <span class="station${D}name">${stop.station?.title || 'Станция'}</span>
+                            <span class="time${D}badge">${timeText}</span>
+                        </div>
+                        ${brakeHtml ? `<div class="card${D}row${D}bottom">${brakeHtml}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        results.style.display = 'block';
+    }
+
+    async function viewTrainSchedule(trainUid, trainNumber) {
+        document.getElementById('singleTrain').value = trainNumber;
+        const scheduleBtn = document.querySelector('.tab-btn[data-tab="tab-schedule"]');
+        if (scheduleBtn) switchTab('tab-schedule', scheduleBtn);
+        
+        const loader = document.getElementById('scheduleLoader');
+        loader.style.display = 'flex';
+        
+        const trainMeta = await searchTrainByNumber(trainNumber);
+        loader.style.display = 'none';
+        
+        if (trainMeta) {
+            const selectedDate = getSelectedDate();
+            renderTimelineFromData(trainMeta.stops, trainNumber, selectedDate);
+        }
+    }
+</script>
+
+</body>
+</html>
