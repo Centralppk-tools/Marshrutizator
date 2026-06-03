@@ -661,12 +661,12 @@
 
     <div id="tab-route" class="tab-content active">
         <div class="trains-grid">
-            <input type="text" class="train-input" id="train-1" placeholder="Поезд 1">
-            <input type="text" class="train-input" id="train-2" placeholder="Поезд 2">
-            <input type="text" class="train-input" id="train-3" placeholder="Поезд 3">
-            <input type="text" class="train-input" id="train-4" placeholder="Поезд 4">
-            <input type="text" class="train-input" id="train-5" placeholder="Поезд 5">
-            <input type="text" class="train-input" id="train-6" placeholder="Поезд 6">
+            <input type="text" class="train-input" id="train-1" maxlength="4" inputmode="numeric" placeholder="Поезд 1">
+            <input type="text" class="train-input" id="train-2" maxlength="4" inputmode="numeric" placeholder="Поезд 2">
+            <input type="text" class="train-input" id="train-3" maxlength="4" inputmode="numeric" placeholder="Поезд 3">
+            <input type="text" class="train-input" id="train-4" maxlength="4" inputmode="numeric" placeholder="Поезд 4">
+            <input type="text" class="train-input" id="train-5" maxlength="4" inputmode="numeric" placeholder="Поезд 5">
+            <input type="text" class="train-input" id="train-6" maxlength="4" inputmode="numeric" placeholder="Поезд 6">
         </div>
         <div class="trains-submit">
             <button class="action-btn" onclick="getRouteData()">Показать маршруты</button>
@@ -775,6 +775,33 @@
                     getScheduleData();
                 }
             });
+    });
+
+    // Ограничение на 4 цифры и автоматический переход к следующему/предыдущему полю
+    document.addEventListener('input', function(e) {
+        const target = e.target;
+        if (target.classList.contains('train-input')) {
+            target.value = target.value.replace(/[^\d]/g, ''); // удаляем всё, кроме цифр
+            
+            if (target.value.length === 4) {
+                const inputs = Array.from(document.querySelectorAll('.train-input'));
+                const currentIndex = inputs.indexOf(target);
+                if (currentIndex !== -1 && currentIndex < inputs.length - 1) {
+                    inputs[currentIndex + 1].focus();
+                }
+            }
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        const target = e.target;
+        if (target.classList.contains('train-input') && e.key === 'Backspace' && target.value.length === 0) {
+            const inputs = Array.from(document.querySelectorAll('.train-input'));
+            const currentIndex = inputs.indexOf(target);
+            if (currentIndex > 0) {
+                inputs[currentIndex - 1].focus();
+            }
+        }
     });
 
     function getSelectedDate() {
