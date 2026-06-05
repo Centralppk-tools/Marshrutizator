@@ -43,37 +43,155 @@
             overflow: hidden;
         }
 
-    .header-container {
+    /* Плашка даты смены + «Ночь» */
+    .shift-date-card {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        margin-bottom: 12px;
+        overflow: hidden;
+    }
+
+    .shift-date-main {
+        padding: 4px 12px;
+    }
+
+    .shift-date-picker {
+        position: relative;
+        display: block;
+        min-height: 48px;
+        padding: 12px 48px 12px 8px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .shift-date-display {
+        display: block;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+        pointer-events: none;
+    }
+
+    .shift-date-input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: transparent;
+        opacity: 0;
+        cursor: pointer;
+        color-scheme: dark;
+        font-size: 16px;
+        z-index: 2;
+    }
+
+    .shift-date-input:focus {
+        outline: none;
+    }
+
+    .shift-date-card:focus-within .shift-date-main {
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .shift-date-input::-webkit-calendar-picker-indicator {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        cursor: pointer;
+        opacity: 0;
+    }
+
+    .shift-date-calendar-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #8b97ab;
+        pointer-events: none;
+        z-index: 1;
+        transition: color 0.2s ease;
+    }
+
+    .shift-date-picker:hover .shift-date-calendar-icon,
+    .shift-date-picker:active .shift-date-calendar-icon {
+        color: #b8c4d8;
+    }
+
+    .shift-date-night {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 22px;
-    }
-
-        h1 {
-            font-size: 22px;
-            font-weight: 600;
-            color: #f4f7ff;
-            letter-spacing: 0.5px;
-        }
-
-    .date-input {
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        color: #f4f7ff;
-        padding: 8px 12px;
-        border-radius: 10px;
+        padding: 12px 16px 16px;
+        background: rgba(0, 0, 0, 0.18);
+        border-top: none;
         font-size: 14px;
-        outline: none;
-        backdrop-filter: blur(5px);
-        color-scheme: dark; /* Важно для нативного календаря в темной теме */
-        cursor: pointer;
-        transition: border-color 0.2s ease, background 0.2s ease;
+        color: #5a6a82;
     }
 
-    .date-input:focus {
-        border-color: #178038;
-        background: rgba(255, 255, 255, 0.12);
+    .shift-date-night-label {
+        color: #5a6a82;
+        font-weight: 400;
+    }
+
+    .night-switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+    .night-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .night-switch-slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background: #252d3a;
+        border-radius: 26px;
+        transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .night-switch-slider::before {
+        content: '';
+        position: absolute;
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background: #ffffff;
+        border-radius: 50%;
+        transition: transform 0.2s ease;
+    }
+
+    .night-switch input:checked + .night-switch-slider {
+        background: #178038;
+        box-shadow: 0 0 8px rgba(23, 128, 56, 0.35);
+    }
+
+    .night-switch input:checked + .night-switch-slider::before {
+        transform: translateX(20px);
     }
 
         /* Переключатель вкладок */
@@ -82,7 +200,7 @@
             background: rgba(255, 255, 255, 0.08);
             border-radius: 12px;
             padding: 2px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             backdrop-filter: blur(5px);
         }
 
@@ -90,8 +208,8 @@
             flex: 1;
             background: none;
             border: none;
-            padding: 10px;
-            font-size: 14px;
+            padding: 8px 10px;
+            font-size: 13px;
             font-weight: 500;
             color: #c4d1e8;
             cursor: pointer;
@@ -119,27 +237,45 @@
             display: block;
         }
 
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+        .schedule-search {
+            margin-bottom: 8px;
         }
 
-        input[type="text"] {
-            flex: 1;
-            padding: 13px 16px;
-            font-size: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 14px;
-            outline: none;
-            background: rgba(255, 255, 255, 0.06);
-            color: #f4f7ff;
-            backdrop-filter: blur(10px);
+        .schedule-search-field {
+            width: 100%;
         }
 
-        input[type="text"]:focus {
-            border-color: #178038;
-            background: rgba(255, 255, 255, 0.12);
+        .schedule-search-btn {
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .schedule-date-hint {
+            margin: 0 0 12px;
+            font-size: 13px;
+            color: #5a6a82;
+            line-height: 1.4;
+        }
+
+        .schedule-empty {
+            display: block;
+            text-align: center;
+            color: #5a6a82;
+            font-size: 14px;
+            margin: 8px 0 16px;
+            padding: 12px 8px;
+        }
+
+        .schedule-route-card {
+            margin-bottom: 14px;
+        }
+
+        .schedule-results-wrap {
+            animation: fadeInScale 0.3s ease-out;
+        }
+
+        .schedule-loader {
+            margin-bottom: 16px;
         }
 
         .action-btn {
@@ -164,30 +300,74 @@
         }
 
         button:focus-visible,
-        input[type="text"]:focus-visible {
+        .train-input:focus-visible {
             outline: 2px solid rgba(29, 167, 69, 0.45);
             outline-offset: 2px;
         }
 
-        .trains-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 3px;
+        .trains-dynamic {
             margin-bottom: 12px;
         }
 
+        .trains-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .train-field {
+            position: relative;
+            min-width: 0;
+        }
+
+        .train-field-clear {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 26px;
+            height: 26px;
+            padding: 0;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: #5a6a82;
+            font-size: 18px;
+            line-height: 1;
+            font-weight: 400;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease, background 0.2s ease;
+            z-index: 2;
+        }
+
+        .train-field-clear:hover,
+        .train-field-clear:focus-visible {
+            color: #9db0cf;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .train-field--has-clear .train-input {
+            padding-right: 34px;
+        }
+
         .train-input {
-            padding: 6px 3px;
-            font-size: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 10px;
+            font-size: 14px;
             border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 5px;
+            border-radius: 10px;
             outline: none;
             background: rgba(255, 255, 255, 0.06);
             color: #f4f7ff;
             backdrop-filter: blur(10px);
-            text-align: center;
-            font-weight: 500;
-            transition: border-color 0.2s ease, background 0.2s ease;
+            text-align: left;
+            font-weight: 400;
+            transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, font-weight 0.2s ease;
             min-width: 0;
             line-height: 1.2;
         }
@@ -198,8 +378,15 @@
         }
 
         .train-input::placeholder {
-            color: #6b7a96;
-            font-size: 9px;
+            color: #4a5668;
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .train-input:not(:placeholder-shown) {
+            color: #f4f7ff;
+            font-weight: 600;
         }
 
         .trains-submit {
@@ -208,32 +395,41 @@
             margin-bottom: 16px;
         }
 
+        .add-train-btn {
+            display: block;
+            width: 100%;
+            margin: 0;
+            padding: 6px 0 2px;
+            border: none;
+            background: transparent;
+            color: #5a6a82;
+            font-size: 14px;
+            font-weight: 400;
+            cursor: pointer;
+            text-align: center;
+            transition: color 0.2s ease;
+        }
+
+        .add-train-btn:hover {
+            color: #9db0cf;
+        }
+
+        .add-train-btn:disabled {
+            opacity: 0.35;
+            cursor: default;
+        }
+
         .trains-submit .action-btn {
             flex: 1;
         }
 
-        @media (max-width: 768px) {
-            .trains-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
-                margin-bottom: 14px;
-            }
-
+        @media (max-width: 430px) {
             .train-input {
                 padding: 10px 8px;
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 430px) {
-            .trains-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 6px;
-                margin-bottom: 12px;
+                font-size: 13px;
             }
 
-            .train-input {
-                padding: 9px 8px;
+            .train-input::placeholder {
                 font-size: 11px;
             }
 
@@ -343,19 +539,33 @@
 
         /* ===== МАРШРУТЫ: Средняя секция — время и пробы ===== */
         .route-card-middle {
-            display: flex; /* Flex-контейнер */
-            flex-direction: column; /* Содержимое идёт вниз */
-            gap: 8px; /* Небольшой зазор между временем и плашками с пробами */
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.06); /* Пунктир-разделитель */
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+        }
+
+        .route-card-middle-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
         }
 
         /* Время отправки и прибытия (22:15 - 06:45) */
         .route-time {
-            font-size: 20px; /* Крупный шрифт для наглядности */
-            font-weight: 700; /* Жирный */
-            color: #ffffff; /* Белый */
-            letter-spacing: 0.5px; /* Небольшое расширение букв */
-            flex-shrink: 0; /* Не сжимается */
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+
+        .route-date {
+            font-size: 13px;
+            color: #8393af;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
 
         /* Контейнер для плашек с пробами (если есть) */
@@ -386,16 +596,190 @@
             white-space: nowrap; /* Не переносит текст */
         }
 
-        /* ===== МАРШРУТЫ: Нижняя секция — информация об обороте ===== */
+        /* ===== МАРШРУТЫ: Нижняя секция — в пути, пробег, оборот ===== */
         .route-card-bottom {
-            display: flex; /* Flex для расположения по горизонтали */
-            justify-content: space-between; /* "В пути" слева, "Оборот" справа */
-            align-items: center; /* Выравнивание по центру вертикали */
-            font-size: 13px; /* Маленький шрифт */
-            color: #8393af; /* Серый приглушённый цвет */
-            white-space: nowrap; /* Не переносит текст */
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #8393af;
         }
 
+        .route-card-bottom > span:first-child {
+            justify-self: start;
+            white-space: nowrap;
+        }
+
+        .route-mileage {
+            justify-self: center;
+            white-space: nowrap;
+        }
+
+        .route-card-bottom > span:last-child {
+            justify-self: end;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        /* ===== МАРШРУТЫ: Сводка по маршруту ===== */
+        .route-summary {
+            background: #141b27;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 4px;
+            animation: fadeInScale 0.3s ease-out;
+        }
+
+        .route-summary-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #a8b8d8;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .route-summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            background: #1a2333;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+        }
+
+        .route-summary-row span:first-child {
+            color: #8393af;
+        }
+
+        .route-summary-row span:last-child {
+            color: #e2e8f0;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .shift-reset-wrap {
+            display: none;
+            justify-content: center;
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+
+        .shift-reset-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 140px;
+            height: 44px;
+            padding: 0;
+            border: none;
+            border-radius: 999px;
+            background: #178038;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .shift-reset-btn:hover {
+            background: #1f8440;
+            transform: translateY(-1px);
+        }
+
+        .shift-reset-btn:active {
+            background: #0f5a2c;
+            transform: translateY(0);
+        }
+
+        .shift-reset-btn:focus-visible {
+            outline: 2px solid rgba(29, 167, 69, 0.45);
+            outline-offset: 2px;
+        }
+
+        .shift-reset-glyph {
+            color: #ffffff;
+            font-size: 30px;
+            font-weight: 800;
+            line-height: 1;
+            display: block;
+            -webkit-text-stroke: 0.35px #ffffff;
+        }
+
+        .shift-confirm-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+        }
+
+        .shift-confirm-overlay.is-open {
+            display: flex;
+        }
+
+        .shift-confirm-box {
+            width: 100%;
+            max-width: 320px;
+            background: #141b27;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            padding: 20px 18px 16px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        .shift-confirm-text {
+            margin: 0 0 18px;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.45;
+            color: #f4f7ff;
+            text-align: center;
+        }
+
+        .shift-confirm-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .shift-confirm-btn {
+            flex: 1;
+            border: none;
+            border-radius: 10px;
+            padding: 11px 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .shift-confirm-btn--muted {
+            background: #252d3a;
+            color: #c4d1e8;
+        }
+
+        .shift-confirm-btn--muted:hover {
+            background: #2f3848;
+        }
+
+        .shift-confirm-btn--ok {
+            background: #178038;
+            color: #ffffff;
+        }
+
+        .shift-confirm-btn--ok:hover {
+            background: #1f8440;
+        }
 
         /* ===== РАСПИСАНИЕ: Контейнер с вертикальной шкалой времени ===== */
         .timeline {
@@ -404,8 +788,8 @@
             --km-marker-width: 44px;
             --km-marker-gap: 10px;
             --timeline-left: calc(var(--km-marker-width) / 2);
-            --station-fill: #111f35;
-            --station-stroke: #1f2b3e;
+            --station-fill: #141b27;
+            --station-stroke: rgba(255, 255, 255, 0.05);
             --station-brakes-fill: linear-gradient(135deg, #30291d, #171925);
             --station-brakes-stroke: #47371b;
             --station-brakes-badge-fill: #3d3018;
@@ -434,7 +818,7 @@
         .station-card {
             background: var(--station-fill);
             border: 1px solid var(--station-stroke);
-            border-radius: 14px;
+            border-radius: 12px;
             padding: 12px 16px;
             display: flex;
             flex-direction: column;
@@ -474,51 +858,26 @@
             min-width: 0; /* Позволяет сжиматься ниже минимума */
         }
 
-        /* Время остановки (вверху справа) — с тёмной подложкой для контраста */
+        /* Время остановки (вверху справа) */
         .time-badge {
-            background: rgba(0, 0, 0, 0.2); /* Тёмная подложка */
-            color: #e2e8f0; /* Светлый текст */
-            padding: 5px 10px; /* Внутренние отступы */
-            border-radius: 6px; /* Скруглённые углы */
-            font-size: 13px; /* Размер шрифта */
-            font-weight: 600; /* Полужирный */
-            flex-shrink: 0; /* Не сжимается */
-            white-space: nowrap; /* Не переносит текст */
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+            white-space: nowrap;
+            background: transparent;
+            padding: 0;
         }
 
         /* ===== РАСПИСАНИЕ: Нижняя строка карточки — пробы тормозов ===== */
         .card-row-bottom {
-            border-top: 1px dashed rgba(255, 255, 255, 0.1); /* Пунктирный разделитель */
-            padding-top: 8px; /* Отступ сверху */
-            display: flex; /* Flex для горизонтального расположения */
-            flex-wrap: nowrap; /* Не переносит на новую строку */
-            gap: 6px; /* Расстояние между плашками */
-            overflow-x: auto; /* Горизонтальная прокрутка, если не влезает */
-            scrollbar-width: none; /* Скрывает полосу прокрутки в Firefox */
-        }
-        
-        /* Скрывает полосу прокрутки в Chrome и Safari */
-        .card-row-bottom::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Одна плашка с пробой */
-        .brake-badge {
-            background: rgba(0, 0, 0, 0.2); /* Тёмная подложка */
-            color: #e2e8f0; /* Светлый текст */
-            padding: 4px 10px; /* Компактные отступы */
-            border-radius: 6px; /* Скруглённые углы */
-            font-size: 12px; /* Маленький шрифт */
-            font-weight: 500; /* Обычный вес */
-            white-space: nowrap; /* Не переносит текст */
-            flex-shrink: 0; /* Не сжимается */
-            border: 1px solid rgba(255, 255, 255, 0.05); /* Тончайшая обводка */
-        }
-
-        .station-card.has-brakes .brake-badge {
-            background: var(--station-brakes-badge-fill);
-            color: var(--station-brakes-badge-text);
-            border-color: var(--station-brakes-badge-stroke);
+            border-top: 1px dashed rgba(255, 255, 255, 0.06);
+            padding-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: flex-start;
         }
 
         /* Квадратик км/пикет — по высоте как карточка станции */
@@ -531,7 +890,7 @@
             min-width: var(--km-marker-width);
             min-height: 48px;
             height: auto;
-            border-radius: 14px;
+            border-radius: 12px;
             background: var(--station-fill);
             border: 1px solid var(--station-stroke);
             z-index: 2;
@@ -623,11 +982,7 @@
                 border-radius: 14px;
             }
 
-            .search-box {
-                flex-direction: column;
-            }
-
-            .action-btn {
+            .schedule-search-btn {
                 width: 100%;
             }
 
@@ -649,24 +1004,36 @@
 <body>
 
 <div class="phone-screen">
-    <div class="header-container">
-        <h1>Маршрутизатор</h1>
-        <input type="date" id="dateInput" class="date-input">
-    </div>
-
     <div class="tabs-nav">
         <button class="tab-btn active" data-tab="tab-route" onclick="switchTab('tab-route', this)">Маршрут</button>
         <button class="tab-btn" data-tab="tab-schedule" onclick="switchTab('tab-schedule', this)">Расписание</button>
     </div>
 
     <div id="tab-route" class="tab-content active">
-        <div class="trains-grid">
-            <input type="text" class="train-input" id="train-1" maxlength="4" inputmode="numeric" placeholder="Поезд 1">
-            <input type="text" class="train-input" id="train-2" maxlength="4" inputmode="numeric" placeholder="Поезд 2">
-            <input type="text" class="train-input" id="train-3" maxlength="4" inputmode="numeric" placeholder="Поезд 3">
-            <input type="text" class="train-input" id="train-4" maxlength="4" inputmode="numeric" placeholder="Поезд 4">
-            <input type="text" class="train-input" id="train-5" maxlength="4" inputmode="numeric" placeholder="Поезд 5">
-            <input type="text" class="train-input" id="train-6" maxlength="4" inputmode="numeric" placeholder="Поезд 6">
+        <div class="shift-date-card">
+            <div class="shift-date-main">
+                <label class="shift-date-picker" id="datePickerLabel" title="Выбрать дату смены">
+                    <span id="dateDisplayText" class="shift-date-display"></span>
+                    <input type="date" id="dateInput" class="shift-date-input" aria-label="Дата смены">
+                    <span class="shift-date-calendar-icon" aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                            <path d="M16 2v4M8 2v4M3 10h18"></path>
+                        </svg>
+                    </span>
+                </label>
+            </div>
+            <div class="shift-date-night">
+                <span class="shift-date-night-label">Ночь</span>
+                <label class="night-switch">
+                    <input type="checkbox" id="nightMode">
+                    <span class="night-switch-slider"></span>
+                </label>
+            </div>
+        </div>
+        <div class="trains-dynamic">
+            <div id="trainsList" class="trains-list"></div>
+            <button type="button" id="addTrainBtn" class="add-train-btn">+ Добавить поезда</button>
         </div>
         <div class="trains-submit">
             <button class="action-btn" onclick="getRouteData()">Показать маршруты</button>
@@ -675,18 +1042,39 @@
         <div id="routeLoader" class="loader">Получение данных...</div>
         
         <div id="routeGrid" class="route-grid" style="display: none;"></div>
+        <div id="shiftResetWrap" class="shift-reset-wrap">
+            <button type="button" id="shiftResetBtn" class="shift-reset-btn" aria-label="Очистить данные смены" onclick="requestShiftReset(event)">
+                <span class="shift-reset-glyph" aria-hidden="true">↻</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="shiftResetConfirm" class="shift-confirm-overlay" aria-hidden="true" role="alertdialog" aria-labelledby="shiftConfirmText" aria-modal="true">
+        <div class="shift-confirm-box">
+            <p id="shiftConfirmText" class="shift-confirm-text">Очистить все данные текущей смены?</p>
+            <div class="shift-confirm-actions">
+                <button type="button" id="shiftConfirmCancel" class="shift-confirm-btn shift-confirm-btn--muted">Отмена</button>
+                <button type="button" id="shiftConfirmOk" class="shift-confirm-btn shift-confirm-btn--ok">ОК</button>
+            </div>
+        </div>
     </div>
 
     <div id="tab-schedule" class="tab-content">
-        <div class="search-box">
-            <input type="text" id="singleTrain" placeholder="Номер поезда">
-            <button class="action-btn" onclick="getScheduleData()">Найти</button>
+        <div class="schedule-search">
+            <div class="schedule-search-field train-field train-field--has-clear">
+                <input type="text" id="singleTrain" class="train-input" placeholder="Поезд (например 6618)" maxlength="4" inputmode="numeric" autocomplete="off">
+                <button type="button" id="singleTrainClear" class="train-field-clear" aria-label="Очистить номер поезда">&times;</button>
+            </div>
+            <button type="button" class="action-btn schedule-search-btn" onclick="getScheduleData()">Найти нитку</button>
         </div>
+        <p class="schedule-date-hint" id="scheduleDateHint"></p>
 
-        <div id="scheduleHeader" class="info-tag" style="display:none; margin-bottom: 14px;"></div>
-        <div id="scheduleLoader" class="loader">Сборка нитки...</div>
+        <p id="scheduleEmpty" class="schedule-empty">Введите номер поезда</p>
 
-        <div id="scheduleResults" class="timeline" style="display: none;">
+        <div id="scheduleHeader" style="display:none;"></div>
+        <div id="scheduleLoader" class="loader schedule-loader">Сборка нитки...</div>
+
+        <div id="scheduleResults" class="timeline schedule-results-wrap" style="display: none;">
             <div class="timeline-line"></div>
             <div id="stationsList"></div>
         </div>
@@ -701,27 +1089,189 @@
     const ANCHOR_STATION = 's2000002';
 
     let stationScheduleCache = { date: null, data: null };
-    let trainThreadsCache = {}; // Хранилище ниток маршрутов для каждого поезда
+    let trainThreadsCache = {};
     let sprDataCache = null;
+
+    const MAX_TRAIN_SLOTS = 6;
+    const DEFAULT_TRAIN_SLOTS = 2;
+    const TRAIN_PLACEHOLDER_EXAMPLES = ['6675', '6676', '6677', '6678', '6679', '6680'];
+
+    function getTrainPlaceholder(index) {
+        const n = index + 1;
+        const example = TRAIN_PLACEHOLDER_EXAMPLES[index];
+        return example ? `Поезд ${n} (${example})` : `Поезд ${n}`;
+    }
+
+    function createTrainInputElement(index, value = '') {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'train-input';
+        input.maxLength = 4;
+        input.inputMode = 'numeric';
+        input.placeholder = getTrainPlaceholder(index);
+        input.value = value;
+        return input;
+    }
+
+    function createTrainFieldElement(index, value = '') {
+        const field = document.createElement('div');
+        field.className = 'train-field train-field--has-clear';
+        field.appendChild(createTrainInputElement(index, value));
+
+        const clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.className = 'train-field-clear';
+        clearBtn.setAttribute('aria-label', 'Удалить поле поезда');
+        clearBtn.textContent = '\u00d7';
+        clearBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            removeTrainSlotAt(index);
+        });
+        field.appendChild(clearBtn);
+
+        return field;
+    }
+
+    function removeTrainSlotAt(index) {
+        const inputs = document.querySelectorAll('#trainsList .train-input');
+        const values = Array.from(inputs).map(input => input.value);
+        if (index < 0 || index >= values.length) return;
+
+        if (values.length > DEFAULT_TRAIN_SLOTS) {
+            values.splice(index, 1);
+        } else {
+            values[index] = '';
+        }
+        renderTrainInputs(values);
+    }
+
+    function renderTrainInputs(savedValues = []) {
+        const list = document.getElementById('trainsList');
+        const addBtn = document.getElementById('addTrainBtn');
+        if (!list || !addBtn) return;
+
+        const slotCount = Math.min(
+            MAX_TRAIN_SLOTS,
+            Math.max(DEFAULT_TRAIN_SLOTS, savedValues.length)
+        );
+
+        list.innerHTML = '';
+        for (let i = 0; i < slotCount; i++) {
+            list.appendChild(createTrainFieldElement(i, savedValues[i] || ''));
+        }
+
+        addBtn.style.display = slotCount >= MAX_TRAIN_SLOTS ? 'none' : 'block';
+        addBtn.disabled = slotCount >= MAX_TRAIN_SLOTS;
+    }
+
+    function getTrainNumbersFromDom() {
+        return Array.from(document.querySelectorAll('#trainsList .train-input'))
+            .map(input => input.value.trim())
+            .filter(Boolean);
+    }
+
+    function addTrainSlot() {
+        const inputs = document.querySelectorAll('#trainsList .train-input');
+        if (inputs.length >= MAX_TRAIN_SLOTS) return;
+
+        const values = Array.from(inputs).map(input => input.value);
+        values.push('');
+        renderTrainInputs(values);
+
+        const list = document.getElementById('trainsList');
+        list?.lastElementChild?.querySelector('.train-input')?.focus();
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
         const today = new Date();
         const yyyy = today.getFullYear();
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
-        document.getElementById('dateInput').value = `${yyyy}${DASH_CHAR}${mm}${DASH_CHAR}${dd}`;
-        
-        // Восстанавливаем сохранённые номера поездов из localStorage
-        const savedTrains = localStorage.getItem('trainNumbers');
-        if (savedTrains) {
-            const trainArray = parseJSON(savedTrains, []);
-            if (Array.isArray(trainArray)) {
-                for (let i = 0; i < trainArray.length && i < 6; i++) {
-                    const input = document.getElementById(`train${DASH_CHAR}${i + 1}`);
-                    if (input) input.value = trainArray[i];
+        const dateInput = document.getElementById('dateInput');
+        const savedDate = localStorage.getItem('selectedDate');
+        const initialIso = savedDate || `${yyyy}${DASH_CHAR}${mm}${DASH_CHAR}${dd}`;
+        setSelectedDateIso(initialIso);
+
+        const datePickerLabel = document.getElementById('datePickerLabel');
+        const openDatePicker = () => {
+            if (typeof dateInput.showPicker === 'function') {
+                try {
+                    dateInput.showPicker();
+                    return;
+                } catch (err) {
+                    /* showPicker может быть заблокирован без user gesture */
                 }
             }
+            dateInput.focus({ preventScroll: true });
+            dateInput.click();
+        };
+
+        datePickerLabel?.addEventListener('click', (e) => {
+            e.preventDefault();
+            openDatePicker();
+        });
+
+        dateInput.addEventListener('change', () => {
+            setSelectedDateIso(dateInput.value);
+            refreshRoutesIfVisible();
+            refreshScheduleIfVisible();
+        });
+
+        dateInput.addEventListener('input', () => {
+            updateDateDisplayText(dateInput.value);
+            updateScheduleDateHint();
+        });
+
+        updateScheduleDateHint();
+
+        document.getElementById('singleTrainClear')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('singleTrain');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+            localStorage.removeItem('lastSingleTrain');
+            resetScheduleResults();
+        });
+
+        document.getElementById('singleTrain')?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                getScheduleData();
+            }
+        });
+
+        updateScheduleEmptyState();
+
+        const nightModeInput = document.getElementById('nightMode');
+        if (localStorage.getItem('nightMode') === '1') {
+            nightModeInput.checked = true;
         }
+        nightModeInput.addEventListener('change', () => {
+            localStorage.setItem('nightMode', nightModeInput.checked ? '1' : '0');
+            updateScheduleDateHint();
+            refreshRoutesIfVisible();
+            refreshScheduleIfVisible();
+        });
+
+        document.getElementById('addTrainBtn')?.addEventListener('click', addTrainSlot);
+
+        document.getElementById('shiftResetBtn')?.addEventListener('click', requestShiftReset);
+
+        const shiftConfirmOverlay = document.getElementById('shiftResetConfirm');
+        document.getElementById('shiftConfirmCancel')?.addEventListener('click', closeShiftResetConfirm);
+        document.getElementById('shiftConfirmOk')?.addEventListener('click', () => {
+            closeShiftResetConfirm();
+            performShiftReset();
+        });
+        shiftConfirmOverlay?.addEventListener('click', (e) => {
+            if (e.target === shiftConfirmOverlay) closeShiftResetConfirm();
+        });
+
+        const savedTrains = parseJSON(localStorage.getItem('trainNumbers'), []);
+        renderTrainInputs(Array.isArray(savedTrains) ? savedTrains : []);
 
         // Восстанавливаем сохраненный номер одиночного поезда
         const lastSingle = localStorage.getItem('lastSingleTrain');
@@ -769,7 +1319,8 @@
                 }
             })
             .finally(() => {
-                if (savedTrains && activeTab === 'tab-route') {
+                const hasTrains = getTrainNumbersFromDom().length > 0;
+                if (hasTrains && activeTab === 'tab-route') {
                     getRouteData();
                 } else if (lastSingle && activeTab === 'tab-schedule') {
                     getScheduleData();
@@ -784,7 +1335,7 @@
             target.value = target.value.replace(/[^\d]/g, ''); // удаляем всё, кроме цифр
             
             if (target.value.length === 4) {
-                const inputs = Array.from(document.querySelectorAll('.train-input'));
+                const inputs = Array.from(document.querySelectorAll('#trainsList .train-input'));
                 const currentIndex = inputs.indexOf(target);
                 if (currentIndex !== -1 && currentIndex < inputs.length - 1) {
                     inputs[currentIndex + 1].focus();
@@ -796,7 +1347,7 @@
     document.addEventListener('keydown', function(e) {
         const target = e.target;
         if (target.classList.contains('train-input') && e.key === 'Backspace' && target.value.length === 0) {
-            const inputs = Array.from(document.querySelectorAll('.train-input'));
+            const inputs = Array.from(document.querySelectorAll('#trainsList .train-input'));
             const currentIndex = inputs.indexOf(target);
             if (currentIndex > 0) {
                 inputs[currentIndex - 1].focus();
@@ -804,8 +1355,245 @@
         }
     });
 
+    const MONTHS_RU_GENITIVE = [
+        'Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня',
+        'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'
+    ];
+
+    function formatShiftDateDisplay(iso) {
+        if (!iso) return '';
+        const parts = iso.split(DASH_CHAR).map(Number);
+        if (parts.length !== 3 || parts.some(n => Number.isNaN(n))) return '';
+        const [year, month, day] = parts;
+        const monthLabel = (MONTHS_RU_GENITIVE[month - 1] || '').toLowerCase();
+        return `${day} ${monthLabel} ${year}`;
+    }
+
+    function updateDateDisplayText(iso) {
+        const el = document.getElementById('dateDisplayText');
+        if (el) el.textContent = formatShiftDateDisplay(iso);
+    }
+
+    function updateScheduleDateHint() {
+        const el = document.getElementById('scheduleDateHint');
+        if (!el) return;
+        const label = formatShiftDateDisplay(getSelectedDate());
+        if (!label) {
+            el.textContent = '';
+            return;
+        }
+        el.textContent = isNightMode() ? `Дата смены: ${label} · ночная смена` : `Дата смены: ${label}`;
+    }
+
+    function updateScheduleEmptyState() {
+        const empty = document.getElementById('scheduleEmpty');
+        const results = document.getElementById('scheduleResults');
+        const header = document.getElementById('scheduleHeader');
+        const loader = document.getElementById('scheduleLoader');
+        if (!empty) return;
+        const loading = loader && loader.style.display === 'flex';
+        const hasResults = results && results.style.display !== 'none'
+            && header && header.style.display !== 'none';
+        empty.style.display = (!loading && !hasResults) ? 'block' : 'none';
+    }
+
+    function escapeHtml(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function formatStopsCount(count) {
+        const n = Number(count) || 0;
+        const mod10 = n % 10;
+        const mod100 = n % 100;
+        if (mod10 === 1 && mod100 !== 11) return `${n} остановка`;
+        if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return `${n} остановки`;
+        return `${n} остановок`;
+    }
+
     function getSelectedDate() {
         return document.getElementById('dateInput').value;
+    }
+
+    function setSelectedDateIso(iso) {
+        const dateInput = document.getElementById('dateInput');
+        if (!iso || !dateInput) return;
+        dateInput.value = iso;
+        updateDateDisplayText(iso);
+        updateScheduleDateHint();
+        localStorage.setItem('selectedDate', iso);
+    }
+
+    function refreshRoutesIfVisible() {
+        const grid = document.getElementById('routeGrid');
+        if (grid && grid.style.display !== 'none' && grid.innerHTML.trim()) {
+            getRouteData();
+        }
+    }
+
+    function refreshScheduleIfVisible() {
+        const results = document.getElementById('scheduleResults');
+        const header = document.getElementById('scheduleHeader');
+        const input = document.getElementById('singleTrain')?.value.trim();
+        if (!input) return;
+        if (results?.style.display !== 'none' && header?.style.display !== 'none') {
+            getScheduleData();
+        }
+    }
+
+    function resetScheduleResults() {
+        const results = document.getElementById('scheduleResults');
+        const header = document.getElementById('scheduleHeader');
+        const list = document.getElementById('stationsList');
+        if (results) results.style.display = 'none';
+        if (header) {
+            header.style.display = 'none';
+            header.innerHTML = '';
+        }
+        if (list) list.innerHTML = '';
+        updateScheduleEmptyState();
+    }
+
+    const SHIFT_STORAGE_KEYS = [
+        'selectedDate',
+        'nightMode',
+        'trainNumbers',
+        'lastSingleTrain',
+        'stationScheduleCache',
+        'trainThreadsCache'
+    ];
+
+    function setShiftResetVisible(visible) {
+        const wrap = document.getElementById('shiftResetWrap');
+        if (wrap) wrap.style.display = visible ? 'flex' : 'none';
+    }
+
+    function closeShiftResetConfirm() {
+        const overlay = document.getElementById('shiftResetConfirm');
+        if (!overlay) return;
+        overlay.classList.remove('is-open');
+        overlay.setAttribute('aria-hidden', 'true');
+    }
+
+    function requestShiftReset(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        const overlay = document.getElementById('shiftResetConfirm');
+        if (overlay) {
+            overlay.classList.add('is-open');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.getElementById('shiftConfirmOk')?.focus();
+            return;
+        }
+
+        if (window.confirm('Очистить все данные текущей смены?')) {
+            performShiftReset();
+        }
+    }
+
+    function performShiftReset() {
+        SHIFT_STORAGE_KEYS.forEach(key => localStorage.removeItem(key));
+        try {
+            sessionStorage.clear();
+        } catch (err) {
+            /* sessionStorage может быть недоступен */
+        }
+
+        stationScheduleCache = { date: null, data: null };
+        trainThreadsCache = {};
+
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        setSelectedDateIso(`${yyyy}${DASH_CHAR}${mm}${DASH_CHAR}${dd}`);
+
+        const nightModeInput = document.getElementById('nightMode');
+        if (nightModeInput) nightModeInput.checked = false;
+
+        renderTrainInputs([]);
+
+        const singleTrain = document.getElementById('singleTrain');
+        if (singleTrain) singleTrain.value = '';
+
+        const grid = document.getElementById('routeGrid');
+        if (grid) {
+            grid.innerHTML = '';
+            grid.style.display = 'none';
+        }
+
+        const routeLoader = document.getElementById('routeLoader');
+        if (routeLoader) routeLoader.style.display = 'none';
+
+        setShiftResetVisible(false);
+        resetScheduleResults();
+        updateScheduleDateHint();
+        updateScheduleEmptyState();
+    }
+
+    function resetShiftData() {
+        requestShiftReset();
+    }
+
+    function isNightMode() {
+        return document.getElementById('nightMode')?.checked === true;
+    }
+
+    function addDaysToDateStr(dateStr, days) {
+        if (!dateStr) return dateStr;
+        const parts = dateStr.split(DASH_CHAR).map(Number);
+        if (parts.length !== 3) return dateStr;
+        const d = new Date(parts[0], parts[1] - 1, parts[2] + days);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}${DASH_CHAR}${mm}${DASH_CHAR}${dd}`;
+    }
+
+    const MORNING_SHIFT_END_MIN = 16 * 60;
+
+    function isMorningNextShiftDeparture(departureTime) {
+        const mins = parseTimeToMinutes(departureTime);
+        if (mins === null) return false;
+        return mins < MORNING_SHIFT_END_MIN;
+    }
+
+    function resolveEffectiveDate(baseDate, departureTime) {
+        if (!isNightMode() || !departureTime) return baseDate;
+        if (isMorningNextShiftDeparture(departureTime)) {
+            return addDaysToDateStr(baseDate, 1);
+        }
+        return baseDate;
+    }
+
+    function tripCrossesMidnight(departure, arrival) {
+        const depMin = parseTimeToMinutes(departure);
+        const arrMin = parseTimeToMinutes(arrival);
+        if (depMin === null || arrMin === null) return false;
+        return arrMin < depMin;
+    }
+
+    function formatTrainCardDate(scheduleDateIso, departure, arrival) {
+        if (!scheduleDateIso) return '—';
+        const parts = scheduleDateIso.split(DASH_CHAR);
+        if (parts.length !== 3) return '—';
+        const day = parseInt(parts[2], 10);
+        const month = parseInt(parts[1], 10);
+        if (!day || month < 1 || month > 12) return '—';
+
+        if (tripCrossesMidnight(departure, arrival)) {
+            const nextIso = addDaysToDateStr(scheduleDateIso, 1);
+            const nextDay = parseInt(nextIso.split(DASH_CHAR)[2], 10);
+            return `${day}${DASH_CHAR}${nextDay} ${MONTHS_RU_GENITIVE[month - 1]}`;
+        }
+        return `${day} ${MONTHS_RU_GENITIVE[month - 1]}`;
     }
 
     function getTime(tStr) {
@@ -896,6 +1684,63 @@
         }
     }
 
+    function stationChainage(stationTitle) {
+        const match = findStationPathMatch(stationTitle);
+        if (!match) return null;
+        return match.km + match.piket / 10;
+    }
+
+    function calcRouteMileageKm(firstTitle, lastTitle) {
+        const start = stationChainage(firstTitle);
+        const end = stationChainage(lastTitle);
+        if (start === null || end === null) return null;
+        return Math.round(Math.abs(end - start));
+    }
+
+    function calcTurnaroundMileageKm(endTitle, nextStartTitle) {
+        const endPos = stationChainage(endTitle);
+        const startPos = stationChainage(nextStartTitle);
+        if (endPos === null || startPos === null) return null;
+        return Math.round(Math.abs(startPos - endPos));
+    }
+
+    function formatMileage(km) {
+        if (km === null || km === undefined || isNaN(km)) return '—';
+        return `${km} км`;
+    }
+
+    function formatTotalMinutes(minutes) {
+        if (minutes === null || minutes === undefined || isNaN(minutes) || minutes <= 0) {
+            return '0 мин';
+        }
+        return formatMinutesToHoursAndMinutes(minutes);
+    }
+
+    function buildRouteSummaryHtml(totals) {
+        const D = DASH_CHAR;
+        return `
+            <div class="route${D}summary">
+                <div class="route${D}summary${D}title">Сводка по маршруту</div>
+                <div class="route${D}summary${D}row">
+                    <span>Время в пути</span>
+                    <span>${formatTotalMinutes(totals.travelMinutes)}</span>
+                </div>
+                <div class="route${D}summary${D}row">
+                    <span>Время в оборотах</span>
+                    <span>${formatTotalMinutes(totals.turnaroundMinutes)}</span>
+                </div>
+                <div class="route${D}summary${D}row">
+                    <span>Количество поездов</span>
+                    <span>${totals.trainCount}</span>
+                </div>
+                <div class="route${D}summary${D}row">
+                    <span>Пробег</span>
+                    <span>${formatMileage(totals.totalMileageKm)}</span>
+                </div>
+            </div>
+        `;
+    }
+
     // Словарь-спасатель для Яндекса
     const ALIASES = {
         "москва-ярославская": "москва (ярославский вокзал)",
@@ -906,9 +1751,9 @@
         "фрязино-пасс.": "фрязино (пассажирская)"
     };
 
-    async function searchTrainByNumber(trainNumber) {
+    async function searchTrainByNumber(trainNumber, scheduleDate) {
         try {
-            const date = getSelectedDate();
+            const date = scheduleDate || getSelectedDate();
             const cacheKey = date + "_" + trainNumber;
             
             // Если нитка этого поезда уже сохранена в памяти, берем её без интернета
@@ -971,7 +1816,8 @@
                 arrival: arrivalTime,
                 duration: durationMins,
                 stops: stops,
-                stops_text: trainData.stops || 'Со всеми остановками'
+                stops_text: trainData.stops || 'Со всеми остановками',
+                scheduleDate: date
             };
             
             // Записываем полученную нитку поезда в память устройства
@@ -985,22 +1831,48 @@
         }
     }
 
+    async function searchTrainByNumberSmart(trainNumber) {
+        const baseDate = getSelectedDate();
+        if (!isNightMode()) {
+            return searchTrainByNumber(trainNumber, baseDate);
+        }
+
+        const trainBase = await searchTrainByNumber(trainNumber, baseDate);
+        if (trainBase) {
+            const effectiveDate = resolveEffectiveDate(baseDate, trainBase.departure);
+            if (effectiveDate !== baseDate) {
+                const trainNext = await searchTrainByNumber(trainNumber, effectiveDate);
+                if (trainNext) return trainNext;
+            }
+            return trainBase;
+        }
+
+        const nextDate = addDaysToDateStr(baseDate, 1);
+        return searchTrainByNumber(trainNumber, nextDate);
+    }
+
     function switchTab(tabId, btn) {
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         btn.classList.add('active');
-        // Запоминаем текущую вкладку
         localStorage.setItem('activeTab', tabId);
+        if (tabId === 'tab-schedule') {
+            updateScheduleDateHint();
+            updateScheduleEmptyState();
+        }
     }
 
     async function getRouteData() {
-        const inputs = Array.from({ length: 6 }, (_, i) => 
-            document.getElementById(`train${DASH_CHAR}${i + 1}`).value.trim()
-        ).filter(Boolean);
+        const inputs = getTrainNumbersFromDom();
 
         if (inputs.length === 0) {
             alert('Введите хотя бы один номер поезда.');
+            return;
+        }
+
+        if (!getSelectedDate()) {
+            alert('Укажите дату смены.');
             return;
         }
         
@@ -1012,17 +1884,36 @@
 
         loader.style.display = 'flex';
         grid.style.display = 'none';
+        setShiftResetVisible(false);
 
-        const trainPromises = inputs.map(trainNumber => searchTrainByNumber(trainNumber));
+        const trainPromises = inputs.map(trainNumber => searchTrainByNumberSmart(trainNumber));
         const allTrainsData = await Promise.all(trainPromises);
         
         const cards = [];
+        const totals = {
+            travelMinutes: 0,
+            turnaroundMinutes: 0,
+            trainCount: 0,
+            totalMileageKm: 0
+        };
         
         for (let i = 0; i < inputs.length; i++) {
             const trainNumber = inputs[i];
             const train = allTrainsData[i];
             
             if (train) {
+                totals.trainCount += 1;
+                if (train.duration !== null && !isNaN(train.duration)) {
+                    totals.travelMinutes += train.duration;
+                }
+
+                const firstTitle = train.stops[0]?.station?.title || '';
+                const lastTitle = train.stops[train.stops.length - 1]?.station?.title || '';
+                const mileageKm = calcRouteMileageKm(firstTitle, lastTitle);
+                if (mileageKm !== null) {
+                    totals.totalMileageKm += mileageKm;
+                }
+
                 let durationHtml = `В пути: ${formatMinutesToHoursAndMinutes(train.duration)}`;
                 let turnaroundHtml = '';
 
@@ -1037,17 +1928,27 @@
                             if (turnaroundMinutes < 0) {
                                 turnaroundMinutes += 1440;
                             }
+                            totals.turnaroundMinutes += turnaroundMinutes;
                             turnaroundHtml = `Оборот: ${formatMinutesToHoursAndMinutes(turnaroundMinutes)}`;
+
+                            const nextFirstTitle = nextTrain.stops[0]?.station?.title || '';
+                            const turnaroundKm = calcTurnaroundMileageKm(lastTitle, nextFirstTitle);
+                            if (turnaroundKm !== null) {
+                                totals.totalMileageKm += turnaroundKm;
+                                if (turnaroundKm > 0) {
+                                    turnaroundHtml += ` · ${formatMileage(turnaroundKm)}`;
+                                }
+                            }
                         }
                     }
                 }
-
-                const firstTitle = train.stops[0]?.station?.title || '';
-                const lastTitle = train.stops[train.stops.length - 1]?.station?.title || '';
                 let currentDirection = 'to_moscow';
                 if (firstTitle.toLowerCase().includes('москва')) {
                     currentDirection = 'from_moscow';
                 }
+
+                const mileageHtml = formatMileage(mileageKm);
+                const cardDateLabel = formatTrainCardDate(train.scheduleDate, train.departure, train.arrival);
 
                 let brakeHtml = '';
                 if (sprDataCache) {
@@ -1093,11 +1994,15 @@
                             </div>
                         </div>
                         <div class="route-card-section route-card-middle">
-                            <div class="route-time">${train.departure} ${DASH_CHAR} ${train.arrival}</div>
+                            <div class="route-card-middle-head">
+                                <div class="route-time">${train.departure} ${DASH_CHAR} ${train.arrival}</div>
+                                <div class="route-date">${cardDateLabel}</div>
+                            </div>
                             ${brakeHtml}
                         </div>
                         <div class="route-card-section route-card-bottom">
                             <span>${durationHtml}</span>
+                            <span class="route-mileage">${mileageHtml}</span>
                             <span>${turnaroundHtml}</span>
                         </div>
                     </div>
@@ -1116,9 +2021,14 @@
             }
         }
 
+        if (totals.trainCount > 0) {
+            cards.push(buildRouteSummaryHtml(totals));
+        }
+
         loader.style.display = 'none';
         grid.innerHTML = cards.join('');
         grid.style.display = 'flex';
+        setShiftResetVisible(totals.trainCount > 0);
     }
 
     function findClosestStationIndex(stops, selectedDate) {
@@ -1170,7 +2080,11 @@
             return;
         }
 
-        // Запоминаем последний введенный одиночный поезд
+        if (!getSelectedDate()) {
+            alert('Укажите дату смены на вкладке «Маршрут».');
+            return;
+        }
+
         localStorage.setItem('lastSingleTrain', input);
 
         const loader = document.getElementById('scheduleLoader');
@@ -1180,11 +2094,13 @@
         loader.style.display = 'flex';
         results.style.display = 'none';
         header.style.display = 'none';
+        updateScheduleEmptyState();
 
-        const trainMeta = await searchTrainByNumber(input);
+        const trainMeta = await searchTrainByNumberSmart(input);
         
         if (!trainMeta) {
             loader.style.display = 'none';
+            updateScheduleEmptyState();
             alert('Поезд не найден.');
             return;
         }
@@ -1192,10 +2108,14 @@
         const selectedDate = getSelectedDate();
         renderTimelineFromData(trainMeta.stops, trainMeta.number, selectedDate);
         loader.style.display = 'none';
+        updateScheduleEmptyState();
     }
 
     function renderTimelineFromData(stops, trainNumber, selectedDate) {
-        if (!stops || stops.length === 0) return;
+        if (!stops || stops.length === 0) {
+            resetScheduleResults();
+            return;
+        }
 
         const D = String.fromCharCode(45);
         const results = document.getElementById('scheduleResults');
@@ -1205,8 +2125,18 @@
         const first = stops[0];
         const last = stops[stops.length - 1];
         const routeTitle = `${first.station?.title || 'Станция'} → ${last.station?.title || 'Станция'}`;
+        const stopsLabel = formatStopsCount(stops.length);
 
-        header.innerHTML = `<div style="margin${D}bottom: 8px;"><strong>${routeTitle}</strong></div><div style="font${D}size: 12px; color: #b8c7e2;">Поезд ${trainNumber}</div>`;
+        header.innerHTML = `
+            <div class="route-card schedule-route-card">
+                <div class="route-card-section route-card-top">
+                    <div class="route-card-title">${escapeHtml(routeTitle)}</div>
+                    <div class="route-card-subtitle">
+                        <span>Поезд ${escapeHtml(trainNumber)}</span>
+                        <span>${escapeHtml(stopsLabel)}</span>
+                    </div>
+                </div>
+            </div>`;
         header.style.display = 'block';
 
         const activeIndex = findClosestStationIndex(stops, selectedDate);
@@ -1288,17 +2218,21 @@
                 }
 
                 if (tags.length > 0) {
-                    brakeHtml = tags.map(tag => `<div class="brake${D}badge">${tag}</div>`).join('');
+                    brakeHtml = `<div class="route${D}tags${D}container">${tags.map(tag =>
+                        `<div class="route${D}brake${D}box"><span class="route${D}brake${D}text">${escapeHtml(tag)}</span></div>`
+                    ).join('')}</div>`;
                 }
             }
 
+            const stationTitle = escapeHtml(stop.station?.title || 'Станция');
+
             return `
                 <div class="station${D}node${isActive ? ' active' : ''}${hasBrakes ? ' has-brakes' : ''}${isTerminal ? ' terminal' : ''}">
-                    <div class="station${D}dot" data-km="${kmText ? kmText : '•'}"></div>
+                    <div class="station${D}dot" data-km="${kmText ? escapeHtml(kmText) : '•'}"></div>
                     <div class="station${D}card${hasBrakes ? ' has-brakes' : ''}">
                         <div class="card${D}row${D}top">
-                            <span class="station${D}name">${stop.station?.title || 'Станция'}</span>
-                            <span class="time${D}badge">${timeText}</span>
+                            <span class="station${D}name">${stationTitle}</span>
+                            <span class="time${D}badge">${escapeHtml(timeText)}</span>
                         </div>
                         ${brakeHtml ? `<div class="card${D}row${D}bottom">${brakeHtml}</div>` : ''}
                     </div>
@@ -1307,6 +2241,10 @@
         }).join('');
 
         results.style.display = 'block';
+        results.style.animation = 'none';
+        void results.offsetHeight;
+        results.style.animation = '';
+        updateScheduleEmptyState();
     }
 
     async function viewTrainSchedule(trainUid, trainNumber) {
@@ -1315,14 +2253,21 @@
         if (scheduleBtn) switchTab('tab-schedule', scheduleBtn);
         
         const loader = document.getElementById('scheduleLoader');
+        const results = document.getElementById('scheduleResults');
+        const header = document.getElementById('scheduleHeader');
         loader.style.display = 'flex';
+        results.style.display = 'none';
+        header.style.display = 'none';
+        updateScheduleEmptyState();
         
-        const trainMeta = await searchTrainByNumber(trainNumber);
+        const trainMeta = await searchTrainByNumberSmart(trainNumber);
         loader.style.display = 'none';
         
         if (trainMeta) {
             const selectedDate = getSelectedDate();
             renderTimelineFromData(trainMeta.stops, trainNumber, selectedDate);
+        } else {
+            updateScheduleEmptyState();
         }
     }
 </script>
