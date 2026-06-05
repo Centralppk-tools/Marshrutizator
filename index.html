@@ -1085,7 +1085,7 @@
     const DASH_CHAR = String.fromCharCode(45);
     const API_KEY = '905d4044' + DASH_CHAR + '2b7e' + DASH_CHAR + '45ca' + DASH_CHAR + 'b10c' + DASH_CHAR + 'f0e907c15f00';
     const API_BASE = 'https://api.rasp.yandex.net/v3.0';
-    const CORS_PROXY = 'https://api.codetabs.com/v1/proxy?quest=';
+    const MY_CLOUDFLARE_PROXY = 'https://late-shape-356d.maksbarybin9458.workers.dev/';
     const ANCHOR_STATION = 's2000002';
 
     let stationScheduleCache = { date: null, data: null };
@@ -1753,6 +1753,10 @@
 
     async function searchTrainByNumber(trainNumber, scheduleDate) {
         try {
+            if (Array.isArray(stationScheduleCache.data) && stationScheduleCache.data.length === 0) {
+                stationScheduleCache.data = null;
+            }
+
             const date = scheduleDate || getSelectedDate();
             const cacheKey = date + "_" + trainNumber;
             
@@ -1764,12 +1768,19 @@
             
             if (!stationScheduleCache.data || stationScheduleCache.date !== date) {
                 const url = `${API_BASE}/schedule/?apikey=${API_KEY}&station=${ANCHOR_STATION}&transport_types=suburban&direction=all&limit=1000&date=${date}&lang=ru_RU`;
-                const response = await fetch(CORS_PROXY + encodeURIComponent(url));
-                if (!response.ok) throw new Error(`Ошибка сервера код ${response.status}`);
-                const data = await response.json();
+                const response = await fetch(`${MY_CLOUDFLARE_PROXY}?url=${encodeURIComponent(url)}`);
+                if (!response.ok) {
+                    alert(`Ошибка сервера код ${response.status}`);
+                    throw new Error(`Ошибка сервера код ${response.status}`);
+                }
+                const stationData = await response.json();
+                if (stationData.error) {
+                    alert(stationData.error);
+                    throw new Error(stationData.error);
+                }
                 
                 stationScheduleCache.date = date;
-                stationScheduleCache.data = data.schedule || [];
+                stationScheduleCache.data = stationData.schedule || [];
                 // Сохраняем суточное расписание в localStorage
                 localStorage.setItem("stationScheduleCache", JSON.stringify(stationScheduleCache));
             }
@@ -1787,9 +1798,16 @@
             if (!trainData) return null;
             
             const threadUrl = `${API_BASE}/thread/?apikey=${API_KEY}&uid=${trainData.thread.uid}&lang=ru_RU`;
-            const threadResponse = await fetch(CORS_PROXY + encodeURIComponent(threadUrl));
-            if (!threadResponse.ok) throw new Error('Не удалось загрузить детали маршрута');
+            const threadResponse = await fetch(`${MY_CLOUDFLARE_PROXY}?url=${encodeURIComponent(threadUrl)}`);
+            if (!threadResponse.ok) {
+                alert(`Ошибка сервера код ${threadResponse.status}`);
+                throw new Error(`Не удалось загрузить детали маршрута: ${threadResponse.status}`);
+            }
             const threadData = await threadResponse.json();
+            if (threadData.error) {
+                alert(threadData.error);
+                throw new Error(threadData.error);
+            }
             
             const stops = threadData.stops || [];
             if (stops.length === 0) return null;
